@@ -10,7 +10,14 @@
 
 class Processor {
 public:
-    void receivePacket(int *packet, size_t packetSize);
+    Processor();
+    Processor(const int volume, const int brightness);
+    ~Processor();
+    void receivePacket(const int *packet, const size_t packetSize);
+private:
+    int *processedPacket;
+    const int volume;
+    const int brightness;
 };
 
 #endif /* processor_h */

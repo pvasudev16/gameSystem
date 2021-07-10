@@ -10,8 +10,8 @@
 
 int main(int argc, const char * argv[]) {
     Processor p;
-    int packet = 5;
-    size_t packetSize = 10;
-    p.receivePacket(&packet, packetSize);
+    int packet[] = {0, 5, 1, 2, 3, 4, 5};
+    size_t packetSize = 7;
+    p.receivePacket(packet, packetSize);
     return 0;
 }
