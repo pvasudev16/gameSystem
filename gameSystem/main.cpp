@@ -6,9 +6,12 @@
 //
 
 #include <iostream>
+#include "processor.h"
 
 int main(int argc, const char * argv[]) {
-    // insert code here...
-    std::cout << "Hello, World!\n";
+    Processor p;
+    int packet = 5;
+    size_t packetSize = 10;
+    p.receivePacket(&packet, packetSize);
     return 0;
 }

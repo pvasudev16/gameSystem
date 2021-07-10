@@ -11,6 +11,6 @@
 class Processor {
 public:
     void receivePacket(int *packet, size_t packetSize);
-}
+};
 
 #endif /* processor_h */
