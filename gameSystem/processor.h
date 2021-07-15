@@ -14,8 +14,11 @@ public:
     Processor(const int volume, const int brightness);
     ~Processor();
     void receivePacket(const int *packet, const size_t packetSize);
+    int * getProcessedPacket();
+    int getPacketSize();
 private:
-    int *processedPacket;
+    int sizeOfPacket;
+    int * processedPacket;
     const int volume;
     const int brightness;
 };
