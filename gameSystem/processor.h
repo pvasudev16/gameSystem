@@ -16,11 +16,15 @@ public:
     void receivePacket(const int *packet, const size_t packetSize);
     int * getProcessedPacket();
     int getPacketSize();
+    std::string getPacketType();
+    const int getVolume();
+    const int getBrightness();
 private:
     int sizeOfPacket;
-    int * processedPacket;
+    std::string packetType;
     const int volume;
     const int brightness;
+    int processedPacket [];
 };
 
 #endif /* processor_h */
