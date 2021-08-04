@@ -17,20 +17,25 @@ Processor::Processor() :
     volume(0),
     brightness(0),
     sizeOfPacket(0),
-    packetType("None"){};
+    packetType("None"),
+    processedPacket(nullptr){};
 
 // Constructor to set volume and brightness
 Processor::Processor(const int volumeValue, const int brightnessValue) :
     volume(volumeValue),
     brightness(brightnessValue),
     sizeOfPacket(0),
-    packetType("None"){}
+    packetType("None"),
+    processedPacket(nullptr){}
 
 // Deconstructor
-Processor::~Processor(){}
+Processor::~Processor(){
+    if (processedPacket != nullptr)
+        delete [] processedPacket;
+}
 
 
-void Processor::receivePacket(const int *packet, const size_t packetSize){
+void Processor::receivePacket(const int * packet, const size_t packetSize){
     // packet[0] is packet type (Audio, Display, Buttons)
     // packet[1] is payload size (how many data elements)
     // packet[2::] is the actual data.
@@ -38,9 +43,13 @@ void Processor::receivePacket(const int *packet, const size_t packetSize){
     // Set the member sizeOfPacket to payload size + 2
     sizeOfPacket = packet[1] + 2;
     
+    // Dynamically allocate memory for processedPacket
+    processedPacket = new int [sizeOfPacket];
+    
     // processedPacket[0] should hold the type
-    // Set the member packetType accordingly.
     processedPacket[0] = packet[0];
+    
+    // Set the member packetType accordingly.
     if (packet[0] == 0)
         packetType = "Audio";
     else if (packet[0] == 1)

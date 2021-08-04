@@ -24,7 +24,7 @@ private:
     std::string packetType;
     const int volume;
     const int brightness;
-    int processedPacket [];
+    int * processedPacket;
 };
 
 #endif /* processor_h */
