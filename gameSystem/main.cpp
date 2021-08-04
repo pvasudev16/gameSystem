@@ -10,6 +10,57 @@
 #define CATCH_CONFIG_MAIN
 #include <catch2/catch.hpp>
 
+//int main(int argc, const char * argv[]) {
+//    int packet[] = {0, 5, 1, 2, 3, 4, 5};
+//    for(int i=0; i<7; ++i)
+//        std::cout << packet[i] << std::endl;
+//    return 0;
+//}
+
+TEST_CASE("Get Packet Type")
+{
+    // Test the getPacketType function
+    std::string packetType;
+    
+    // Create dummy test packet
+    size_t testPacketSize = 3;
+    int * testPacket = new int [testPacketSize];
+    // Payload size 1, data 1
+    testPacket[1] = 1;
+    testPacket[2] = 1;
+    
+    // Uninitialized
+    Processor p;
+    packetType = p.getPacketType();
+    REQUIRE(packetType == "None");
+    
+    // Audio
+    testPacket[0] = 0;
+    p.receivePacket(testPacket, testPacketSize);
+    packetType = p.getPacketType();
+    REQUIRE(packetType == "Audio");
+    
+    // Display
+    testPacket[0] = 1;
+    p.receivePacket(testPacket, testPacketSize);
+    packetType = p.getPacketType();
+    REQUIRE(packetType == "Display");
+        
+    // Button
+    testPacket[0] = 2;
+    p.receivePacket(testPacket, testPacketSize);
+    packetType = p.getPacketType();
+    REQUIRE(packetType == "Button");
+    
+    // Other
+    testPacket[0] = 3;
+    p.receivePacket(testPacket, testPacketSize);
+    packetType = p.getPacketType();
+    REQUIRE(packetType == "Other");
+    
+    delete [] testPacket;
+}
+
 TEST_CASE("Get Volume")
 {
     // Test default ctor behaviour.
@@ -20,6 +71,17 @@ TEST_CASE("Get Volume")
     int volume = 10;
     Processor q(volume, 0);
     REQUIRE(q.getVolume() == volume);
+}
+
+TEST_CASE("Get Brightness")
+{
+    // Default ctor
+    Processor p;
+    REQUIRE(p.getBrightness() == 0);
+    
+    int brightness = 5;
+    Processor q(0, brightness);
+    REQUIRE(q.getBrightness() == brightness);
 }
 
 TEST_CASE("Volume")
@@ -51,7 +113,7 @@ TEST_CASE("Volume")
         else if (i==1)
             REQUIRE(processedPacket[i] == sizeOfPacket - 2);
         else
-            REQUIRE(processedPacket[i] == testPacket[i]);
+            REQUIRE(processedPacket[i] == testPacket[i] * volume);
     }
-
+    delete [] testPacket;
 }
