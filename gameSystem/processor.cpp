@@ -74,7 +74,7 @@ void Processor::receivePacket(const int * packet, const size_t packetSize){
         }
     }
     else if (packet[0] == 2) { //Buttons
-        for (int i = 2; i <packetSize; ++i)
+        for (int i = 2; i<packetSize; ++i)
             // For buttons, there is nothing to do, except to store the button values.
             processedPacket[i] = packet[i];
     }

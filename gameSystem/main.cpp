@@ -10,12 +10,7 @@
 #define CATCH_CONFIG_MAIN
 #include <catch2/catch.hpp>
 
-//int main(int argc, const char * argv[]) {
-//    int packet[] = {0, 5, 1, 2, 3, 4, 5};
-//    for(int i=0; i<7; ++i)
-//        std::cout << packet[i] << std::endl;
-//    return 0;
-//}
+
 
 TEST_CASE("Get Packet Type")
 {
@@ -101,11 +96,10 @@ TEST_CASE("Volume")
     int brightness = 0;
     Processor p(volume, brightness);
     
-    
     p.receivePacket(testPacket, testPacketSize);
-    int * processedPacket = p.getProcessedPacket();
     int sizeOfPacket = p.getPacketSize();
-    REQUIRE(sizeOfPacket == 7);
+    REQUIRE(sizeOfPacket == testPacketSize);
+    int * processedPacket =  p.getProcessedPacket();
     for (int i=0; i<sizeOfPacket; ++i)
     {
         if (i==0)
@@ -114,6 +108,67 @@ TEST_CASE("Volume")
             REQUIRE(processedPacket[i] == sizeOfPacket - 2);
         else
             REQUIRE(processedPacket[i] == testPacket[i] * volume);
+    }
+    delete [] testPacket;
+}
+
+TEST_CASE("Display")
+{
+    // Check the basic display processor works.
+    // Create testPacket = [1, 5, 1, 2, 3, 4, 5]
+    int * testPacket;
+    size_t testPacketSize = 7;
+    testPacket = new int [testPacketSize];
+    testPacket[0] = 1; // display
+    testPacket[1] = 5; // payload size
+    for (int j=2; j<testPacketSize; ++j)
+        testPacket[j] = j-1;
+    
+    // Instantiate the Processor object.
+    int volume = 0;
+    int brightness = 3;
+    Processor p(volume, brightness);
+    
+    p.receivePacket(testPacket, testPacketSize);
+    int sizeOfPacket = p.getPacketSize();
+    REQUIRE(sizeOfPacket == testPacketSize);
+    int * processedPacket = p.getProcessedPacket();
+    for (int i=0; i<sizeOfPacket; ++i)
+    {
+        if (i==0)
+            REQUIRE(processedPacket[i] == 1);
+        else if (i==1)
+            REQUIRE(processedPacket[i] == sizeOfPacket - 2);
+        else
+            REQUIRE(processedPacket[i] == testPacket[i] * brightness);
+    }
+    delete [] testPacket;
+}
+
+TEST_CASE("Button")
+{
+    // Check the button processor works
+    // Button test packet: [2, 6, 0, 0, 1, 0, 0, 0]
+    size_t testPacketSize = 8;
+    int * testPacket = new int [testPacketSize];
+    testPacket[0] = 2; // button
+    testPacket[1] = 6; // payload size
+    for (int j=2; j<testPacketSize; ++j)
+        j == 4 ? testPacket[j] = 1 : testPacket[j] = 0;
+    
+    Processor p;
+    p.receivePacket(testPacket, testPacketSize);
+    int sizeOfPacket = p.getPacketSize();
+    REQUIRE(sizeOfPacket == testPacketSize);
+    int * processedPacket = p.getProcessedPacket();
+    for (int i=0; i<sizeOfPacket; ++i)
+    {
+        if (i==0)
+            REQUIRE(processedPacket[i] == 2);
+        else if (i==1)
+            REQUIRE(processedPacket[i] == sizeOfPacket - 2);
+        else
+            REQUIRE(processedPacket[i] == testPacket[i]);
     }
     delete [] testPacket;
 }
