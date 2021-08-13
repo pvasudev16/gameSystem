@@ -80,10 +80,16 @@ int unsignedCharToInt(const unsigned char *byte)
 }
 
 // receivePacket receives an array of unsigned chars, and a packetSize.
-void Processor::receivePacket(const unsigned char * packet, const size_t packetSize){
-    // packet[0:sizeof(float)-1] is packet type (Audio, Display, Buttons), as an int
+void Processor::receivePacket(
+                              const unsigned char * packet,
+                              const size_t totalPacketSize
+                              )
+{
+    // packet[0:sizeof(float)-1] is packet type (Audio, Display, Buttons), as an
+    // int
     //     e.g. packet[0:3] are four unsigned chars encoding an int
-    // packet[sizeof(float), 2*size(float)-1] is payload size (how many data elements)
+    // packet[sizeof(float), 2*size(float)-1] is payload size (how many data
+    // elements)
     //     e.g. packt[4:7] are four unsigned chars encoding an int
     // packet[2*sizeof(float)::] is the actual data.
     //     e.g. packet[8::] is the actual data
@@ -95,30 +101,48 @@ void Processor::receivePacket(const unsigned char * packet, const size_t packetS
     
     
     //Get the payload size
-    int payloadSize = unsignedCharToInt(&packet[sizeof(float)]);
+    // Placeholder, as right now, payloadSize == 0
+    int payloadSize = unsignedCharToInt(&packet[sizeof(int)]);
     
     // Assign member sizeOfPacket
+    // Placeholder, as right now, sizeOfPacket == 2
+    // Note: sizeOfPacket != totalPacketSize
+    //    e.g. 8 ints means totalPacketSize == 32
+    //    while we want sizeOfPacket == 8.
     sizeOfPacket = payloadSize + 2;
+    
+    // Processed packet
+    processedPacket = new float [sizeOfPacket];
 
     // Set the member packetType accordingly.
     if (packetType == 0)
-    {
         Processor::packetType = "Audio";
-    }
     else if (packetType == 1)
-    {
         Processor::packetType = "Display";
-    }
     else if (packetType == 2)
-    {
         Processor::packetType = "Button";
-    }
     else
-    {
         Processor::packetType = "Other";
-    }
-
     
+    // Process the packet
+    // We've already taken care of the first 2*sizeof(int) unsigned chars.
+    // For testing purposes, set j=0; It should be 2*sizeof(int).
+    int j = 0;
+    // For testing purposes, set k=0; It should be 2.
+    int k = 0;
+    while(j<totalPacketSize && k<sizeOfPacket)
+    {
+        float multiplier;
+        if (packetType == 0) // Audio
+            multiplier = volume;
+        else if (packetType == 1) // Display
+            multiplier = brightness;
+        else // Button or other
+            multiplier = 1;
+        processedPacket[k] = unsignedCharToFloat(&packet[j]) * multiplier;
+        ++k;
+        j = j + sizeof(float);
+    }
 }
 
 float * Processor::getProcessedPacket()

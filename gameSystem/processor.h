@@ -13,7 +13,7 @@ public:
     Processor();
     Processor(const int volume, const int brightness);
     ~Processor();
-    void receivePacket(const unsigned char *packet, const size_t packetSize);
+    void receivePacket(const unsigned char *packet, const size_t totalPacketSize);
     float * getProcessedPacket();
     int getPacketSize();
     std::string getPacketType();

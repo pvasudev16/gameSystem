@@ -18,10 +18,22 @@ TEST_CASE("Hello World")
     // to 0, which then sets the Processor::packetType member to "Audio".
     Processor p;
     unsigned char * packet;
-    packet = new unsigned char [1];
-    packet[0] = 1;
-    p.receivePacket(packet, 1);
+    packet = new unsigned char [3*sizeof(float)];
+    for (int i=0; i<3*sizeof(float); ++i)
+        packet[i] = 0;
+    p.receivePacket(packet, 3*sizeof(float));
     REQUIRE(p.getPacketType() == "Audio");
+    
+    // In our hello world implementation of unsignedCharToInt(Float),
+    // processedPacket will be 2 floats long, and all zeros
+    float * processedPacket = p.getProcessedPacket();
+    REQUIRE(processedPacket[0] == 0.0);
+    REQUIRE(processedPacket[1] == 0.0);
+    
+    // size of the packet should be 2
+    REQUIRE(p.getPacketSize() == 2);
+    
+    delete [] packet;
 }
 
 //TEST_CASE("Get Packet Type")
