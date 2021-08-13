@@ -10,7 +10,19 @@
 #define CATCH_CONFIG_MAIN
 #include <catch2/catch.hpp>
 
-
+TEST_CASE("Hello World")
+{
+    // In this Hello World scenario, the unsignedCharToFloat
+    // and unsignedCharToInt functions return 0. Receive a dummy
+    // packet. This sets the packetType integer, in receivePacket(),
+    // to 0, which then sets the Processor::packetType member to "Audio".
+    Processor p;
+    unsigned char * packet;
+    packet = new unsigned char [1];
+    packet[0] = 1;
+    p.receivePacket(packet, 1);
+    REQUIRE(p.getPacketType() == "Audio");
+}
 
 //TEST_CASE("Get Packet Type")
 //{

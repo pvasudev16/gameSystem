@@ -34,88 +34,94 @@ Processor::~Processor(){
         delete [] processedPacket;
 }
 
-// Decode an integer as a char
-void int2char(int integerToConvert, char & arrayToWrite)
+// Determine endian-ness of the system
+// Taken from https://stackoverflow.com/questions/4239993/determining-endianness-at-compile-time
+bool isLittleEndian()
 {
-    char * integerRepresentation;
-    integerRepresentation = new char [4];
-    // Code to represent the four chars of the integer.
-    // For now, some dummy code to set them all to zero.
-    for (int i=0; i<4; ++i)
-        integerRepresentation[i] = 0;
-    
-    // Code to write the four bytes.
-    // Write the first byte to where arrayToWrite points
-    // Increment the pointer, and repeat this
-    char * ptr = &arrayToWrite;
-    for (int i=0; i<4; ++i)
-    {
-        *ptr = integerRepresentation[i];
-        ++ptr;
-    }
+    short int number = 0x1;
+    char *numPtr = (char*)&number;
+    return (numPtr[0] == 1);
 }
 
-// For now, assume that receivePacket receives an array of integers.
-void Processor::receivePacket(const int * packet, const size_t packetSize){
-    // packet[0] is packet type (Audio, Display, Buttons)
-    // packet[1] is payload size (how many data elements)
-    // packet[2::] is the actual data.
+//double decode_ieee_single(const unsigned char *v, int natural_order)
+//{
+//const unsigned char *data = v;
+//int s, e;
+//unsigned long src;
+//long f;
+//double value;
+//
+//if (natural_order) {
+//src = ((unsigned long)data[0] << 24) |
+//((unsigned long)data[1] << 16) |
+//((unsigned long)data[2] << 8) |
+//((unsigned long)data[3]);
+//}
+//else {
+//src = ((unsigned long)data[3] << 24) |
+//((unsigned long)data[2] << 16) |
+//((unsigned long)data[1] << 8) |
+//((unsigned long)data[0]);
+//}
+//}
+
+// Encode unsigned chars to float
+float unsignedCharToFloat(const unsigned char * byte)
+{
+    // Hello world version of this function
+    return 0.0;
+}
+
+// Encode unsignec chars to int
+int unsignedCharToInt(const unsigned char *byte)
+{
+    // Hellow world version of this function
+    return 0;
+}
+
+// receivePacket receives an array of unsigned chars, and a packetSize.
+void Processor::receivePacket(const unsigned char * packet, const size_t packetSize){
+    // packet[0:sizeof(float)-1] is packet type (Audio, Display, Buttons), as an int
+    //     e.g. packet[0:3] are four unsigned chars encoding an int
+    // packet[sizeof(float), 2*size(float)-1] is payload size (how many data elements)
+    //     e.g. packt[4:7] are four unsigned chars encoding an int
+    // packet[2*sizeof(float)::] is the actual data.
+    //     e.g. packet[8::] is the actual data
     
+    // Get the packet type
+    // Placeholder, as right now, packetType == 0
+    int packetType = unsignedCharToInt(&packet[0]);
     // Set the member sizeOfPacket to payload size + 2
-    sizeOfPacket = packet[1] + 2;
     
+    
+    //Get the payload size
+    int payloadSize = unsignedCharToInt(&packet[sizeof(float)]);
+    
+    // Assign member sizeOfPacket
+    sizeOfPacket = payloadSize + 2;
+
     // Set the member packetType accordingly.
-    if (packet[0] == 0)
+    if (packetType == 0)
     {
-        packetType = "Audio";
-        // Audio data is in integer/floats, which are each four bytes
-        processedPacket = new char [sizeOfPacket * 4];
+        Processor::packetType = "Audio";
     }
-    else if (packet[0] == 1)
+    else if (packetType == 1)
     {
-        packetType = "Display";
-        // Display data is in unsigned char, which are each a byte
-        // Need six extra bytes to store the data type and payload size
-        // as integers
-        processedPacket = new char [sizeOfPacket + 6];
+        Processor::packetType = "Display";
     }
-    else if (packet[0] == 2)
+    else if (packetType == 2)
     {
-        packetType = "Button";
-        processedPacket = new char [sizeOfPacket * 4];
+        Processor::packetType = "Button";
     }
     else
     {
-        packetType = "Other";
-        processedPacket = new char [sizeOfPacket * 4];
+        Processor::packetType = "Other";
     }
+
     
-    // processedPacket[0] should hold the type
-    int2char(packet[0], processedPacket[0]);
-    
-    
-    // processedPacket[1] should hold the payload size
-    int2char(packet[1], processedPacket[4]);
-    
-//    // Process the packet
-//    if (packet[0] == 0){ // Audio
-//        for (int i = 2; i<packetSize; ++i){
-//            processedPacket[i] = packet[i] * volume;
-//        }
-//    }
-//    else if (packet[0] == 1) { // Display
-//        for (int i = 2; i<packetSize; ++i){
-//            processedPacket[i] = packet[i] * brightness;
-//        }
-//    }
-//    else if (packet[0] == 2) { //Buttons
-//        for (int i = 2; i<packetSize; ++i)
-//            // For buttons, there is nothing to do, except to store the button values.
-//            processedPacket[i] = packet[i];
-//    }
 }
 
-char * Processor::getProcessedPacket()
+float * Processor::getProcessedPacket()
 {
     return processedPacket;
 }
