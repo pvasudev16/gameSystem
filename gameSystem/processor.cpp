@@ -80,13 +80,22 @@ int unsignedCharToInt(const unsigned char *byte)
     // byte[0] is the most significant byte
     // byte[sizeof(int)-1] is the least significant byte.
     int integerToReturn = 0;
-    integerToReturn += int(*byte << 24);
-    ++byte;
-    integerToReturn += int(*byte << 16);
-    ++ byte;
-    integerToReturn += int(*byte << 8);
-    ++byte;
-    integerToReturn += int(*byte);
+    bool littleEndian = isLittleEndian();
+    if(littleEndian)
+    {
+        for (int j=0; j<sizeof(int); ++j)
+        {
+            integerToReturn += int(*byte << (sizeof(int) - (j+1))*8);
+            ++byte;
+        }
+    }
+    else
+    {
+        for (int j=0; j<sizeof(int); ++j)
+        {
+            integerToReturn += int(*byte << j*8);
+        }
+    }
     return integerToReturn;
 }
 
