@@ -73,12 +73,9 @@ float unsignedCharToFloat(const unsigned char * byte)
     return 0.0;
 }
 
-// Encode unsignec chars to int
+// Encode unsigned chars to int
 int unsignedCharToInt(const unsigned char *byte)
 {
-    // Assume little endian-ness.
-    // byte[0] is the most significant byte
-    // byte[sizeof(int)-1] is the least significant byte.
     int integerToReturn = 0;
     bool littleEndian = isLittleEndian();
     if(littleEndian)
@@ -94,6 +91,7 @@ int unsignedCharToInt(const unsigned char *byte)
         for (int j=0; j<sizeof(int); ++j)
         {
             integerToReturn += int(*byte << j*8);
+            ++byte;
         }
     }
     return integerToReturn;
