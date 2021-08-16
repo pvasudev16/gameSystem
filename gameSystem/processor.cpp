@@ -36,6 +36,7 @@ Processor::~Processor(){
 
 // Determine endian-ness of the system
 // Taken from https://stackoverflow.com/questions/4239993/determining-endianness-at-compile-time
+// My machine is little-endian.
 bool isLittleEndian()
 {
     short int number = 0x1;
@@ -75,8 +76,18 @@ float unsignedCharToFloat(const unsigned char * byte)
 // Encode unsignec chars to int
 int unsignedCharToInt(const unsigned char *byte)
 {
-    // Hellow world version of this function
-    return 0;
+    // Assume little endian-ness.
+    // byte[0] is the most significant byte
+    // byte[sizeof(int)-1] is the least significant byte.
+    int integerToReturn = 0;
+    integerToReturn += int(*byte << 24);
+    ++byte;
+    integerToReturn += int(*byte << 16);
+    ++ byte;
+    integerToReturn += int(*byte << 8);
+    ++byte;
+    integerToReturn += int(*byte);
+    return integerToReturn;
 }
 
 // receivePacket receives an array of unsigned chars, and a packetSize.
@@ -97,12 +108,13 @@ void Processor::receivePacket(
     // Get the packet type
     // Placeholder, as right now, packetType == 0
     int packetType = unsignedCharToInt(&packet[0]);
-    // Set the member sizeOfPacket to payload size + 2
-    
     
     //Get the payload size
     // Placeholder, as right now, payloadSize == 0
     int payloadSize = unsignedCharToInt(&packet[sizeof(int)]);
+    
+    // to-do: Set the packetType and payloadSize
+    // in processedPacket.
     
     // Assign member sizeOfPacket
     // Placeholder, as right now, sizeOfPacket == 2

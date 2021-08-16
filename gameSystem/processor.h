@@ -28,4 +28,8 @@ private:
     // int * processedPacket;
 };
 
+bool isLittleEndian();
+int unsignedCharToInt(const unsigned char *byte);
+float unsignedCharToFloat(const unsigned char * byte);
+
 #endif /* processor_h */

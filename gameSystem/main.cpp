@@ -10,6 +10,21 @@
 #define CATCH_CONFIG_MAIN
 #include <catch2/catch.hpp>
 
+TEST_CASE("unsignedCharToInt")
+{
+    // Check that unsignedCharToInt is doing what it should for a few
+    // positive numbers.
+    unsigned char * representation;
+    representation = new unsigned char [4];
+    representation[0] = 0x01; // 2**24 = 16,777,216
+    representation[1] = 0x02; // 2**17 = 131,072
+    representation[2] = 0x04; // 2**10 = 1,024
+    representation[3] = 0x08; // 2**3 = 8
+    // Sum: 16,909,320
+    int integerRepresentation = unsignedCharToInt(representation);
+    REQUIRE(integerRepresentation == 16909320);
+}
+
 TEST_CASE("Hello World")
 {
     // In this Hello World scenario, the unsignedCharToFloat
