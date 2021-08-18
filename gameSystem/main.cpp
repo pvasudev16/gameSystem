@@ -16,7 +16,7 @@ TEST_CASE("unsignedCharToInt")
     // positive numbers.
     unsigned char * representation;
     int integerRepresentation;
-    
+
     // Check that zero is correctly reperesented
     representation = new unsigned char [4];
     representation[0] = 0x00;
@@ -34,6 +34,32 @@ TEST_CASE("unsignedCharToInt")
     // Sum: 16,909,320
     integerRepresentation = unsignedCharToInt(representation);
     REQUIRE(integerRepresentation == 16909320);
+    delete [] representation;
+ }
+
+TEST_CASE("unsignedCharToFloat")
+{
+    // Check that unsignedCharToFloat is doing what it should for a few
+    // numbers.
+    unsigned char * representation;
+    float floatRepresentation;
+
+    // Check that zero is correctly reperesented
+    representation = new unsigned char [4];
+    representation[0] = 0x00;
+    representation[1] = 0x00;
+    representation[2] = 0x00;
+    representation[3] = 0x00;
+    floatRepresentation = unsignedCharToFloat(representation);
+    REQUIRE(floatRepresentation == 0.0);
+
+    // Represent 130.25
+    representation[0] = 0x43; // SEEE EEEE = 0100 0011 = 0x43
+    representation[1] = 0x02; // EMMM MMMM = 0000 0010 = 0x20
+    representation[2] = 0x40; // MMMM MMMM = 0100 0000 = 0x40
+    representation[3] = 0x00; // MMMM MMMM = 0000 0000 = 0x00
+    floatRepresentation = unsignedCharToFloat(representation);
+    REQUIRE(floatRepresentation == 130.25);
     delete [] representation;
 }
 
