@@ -34,16 +34,6 @@ Processor::~Processor(){
         delete [] processedPacket;
 }
 
-// Determine endian-ness of the system
-// Taken from https://stackoverflow.com/questions/4239993/determining-endianness-at-compile-time
-// My machine is little-endian.
-bool isLittleEndian()
-{
-    short int number = 0x1;
-    char *numPtr = (char*)&number;
-    return (numPtr[0] == 1);
-}
-
 //double decode_ieee_single(const unsigned char *v, int natural_order)
 //{
 //const unsigned char *data = v;
@@ -67,6 +57,7 @@ bool isLittleEndian()
 //}
 
 // Encode unsigned chars to float
+// Assume least significant byte is first, i.e. little endian.
 float unsignedCharToFloat(const unsigned char * byte)
 {
     // Hello world version of this function
@@ -77,23 +68,17 @@ float unsignedCharToFloat(const unsigned char * byte)
 int unsignedCharToInt(const unsigned char *byte)
 {
     int integerToReturn = 0;
-    bool littleEndian = isLittleEndian();
-    if(littleEndian)
-    {
-        for (int j=0; j<sizeof(int); ++j)
-        {
-            integerToReturn += int(*byte << (sizeof(int) - (j+1))*8);
-            ++byte;
-        }
-    }
-    else
-    {
-        for (int j=0; j<sizeof(int); ++j)
-        {
-            integerToReturn += int(*byte << j*8);
-            ++byte;
-        }
-    }
+    unsigned char byte0 = *byte;
+    ++byte;
+    unsigned char byte1 = *byte;
+    ++byte;
+    unsigned char byte2 = *byte;
+    ++byte;
+    unsigned char byte3 = *byte;
+    integerToReturn = int(byte0 << 24
+                          | byte1 << 16
+                          | byte2 << 8
+                          | byte3 );
     return integerToReturn;
 }
 
