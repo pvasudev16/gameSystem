@@ -59,7 +59,6 @@ Processor::~Processor(){
 // Encode unsigned chars to float
 float unsignedCharToFloat(const unsigned char * byte)
 {
-    float floatToReturn;
     unsigned char byte0 = *byte;
     ++byte;
     unsigned char byte1 = *byte;
@@ -67,12 +66,15 @@ float unsignedCharToFloat(const unsigned char * byte)
     unsigned char byte2 = *byte;
     ++byte;
     unsigned char byte3 = *byte;
-
-    floatToReturn = float(byte0 << 24
-                          | byte1 << 16
-                          | byte2 << 8
-                          | byte3);
-    return floatToReturn;
+    union{
+        float f;
+        int i;
+    } f;
+    f.i = byte0 << 24
+          | byte1 << 16
+          | byte2 << 8
+          | byte3;
+    return f.f;
 }
 
 // Encode unsigned chars to int
