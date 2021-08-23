@@ -152,29 +152,29 @@ TEST_CASE("Get Packet Type")
     
     delete [] testPacket;
 }
-//
-//TEST_CASE("Get Volume")
-//{
-//    // Test default ctor behaviour.
-//    Processor p;
-//    REQUIRE(p.getVolume() == 0);
-//
-//    // Set volume
-//    int volume = 10;
-//    Processor q(volume, 0);
-//    REQUIRE(q.getVolume() == volume);
-//}
-//
-//TEST_CASE("Get Brightness")
-//{
-//    // Default ctor
-//    Processor p;
-//    REQUIRE(p.getBrightness() == 0);
-//    
-//    int brightness = 5;
-//    Processor q(0, brightness);
-//    REQUIRE(q.getBrightness() == brightness);
-//}
+
+TEST_CASE("Get Volume")
+{
+    // Test default ctor behaviour.
+    Processor p;
+    REQUIRE(p.getVolume() == 0);
+
+    // Set volume
+    int volume = 10;
+    Processor q(volume, 0);
+    REQUIRE(q.getVolume() == volume);
+}
+
+TEST_CASE("Get Brightness")
+{
+    // Default ctor
+    Processor p;
+    REQUIRE(p.getBrightness() == 0);
+    
+    int brightness = 5;
+    Processor q(0, brightness);
+    REQUIRE(q.getBrightness() == brightness);
+}
 //
 //TEST_CASE("Volume")
 //{
