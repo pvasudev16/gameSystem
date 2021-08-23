@@ -29,6 +29,8 @@ private:
 };
 
 bool isLittleEndian();
+// TO-DO intToUnsignedChar
+// unsigned char * intToUnsignedChar(const int integer, unsigned char * buffer)
 int unsignedCharToInt(const unsigned char *byte);
 float unsignedCharToFloat(const unsigned char * byte);
 

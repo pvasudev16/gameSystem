@@ -34,48 +34,17 @@ Processor::~Processor(){
         delete [] processedPacket;
 }
 
-//double decode_ieee_single(const unsigned char *v, int natural_order)
+// Encode int as a sequence of unsigned chars
+// TO-DO
+//unsigned char * intToUnsignedChar(const int integer, unsigned char * buffer)
 //{
-//const unsigned char *data = v;
-//int s, e;
-//unsigned long src;
-//long f;
-//double value;
-//
-//if (natural_order) {
-//src = ((unsigned long)data[0] << 24) |
-//((unsigned long)data[1] << 16) |
-//((unsigned long)data[2] << 8) |
-//((unsigned long)data[3]);
+//    for (int j=0; j<sizeof(int); ++j)
+//    {
+//        buffer[j] = integer >> (sizeof(int) - (j+1)*8);
+//        ++buffer;
+//    }
+//    return buffer;
 //}
-//else {
-//src = ((unsigned long)data[3] << 24) |
-//((unsigned long)data[2] << 16) |
-//((unsigned long)data[1] << 8) |
-//((unsigned long)data[0]);
-//}
-//}
-
-// Encode unsigned chars to float
-float unsignedCharToFloat(const unsigned char * byte)
-{
-    unsigned char byte0 = *byte;
-    ++byte;
-    unsigned char byte1 = *byte;
-    ++byte;
-    unsigned char byte2 = *byte;
-    ++byte;
-    unsigned char byte3 = *byte;
-    union{
-        float f;
-        int i;
-    } f;
-    f.i = byte0 << 24
-          | byte1 << 16
-          | byte2 << 8
-          | byte3;
-    return f.f;
-}
 
 // Encode unsigned chars to int
 int unsignedCharToInt(const unsigned char *byte)
@@ -87,6 +56,18 @@ int unsignedCharToInt(const unsigned char *byte)
         ++byte;
     }
     return integerToReturn;
+}
+
+// Encode unsigned chars to float
+// For an alternate solution, see https://godbolt.org/z/vYM5czqs8
+float unsignedCharToFloat(const unsigned char * byte)
+{
+    union{
+        float f;
+        int i;
+    } f;
+    f.i = unsignedCharToInt(byte);
+    return f.f;
 }
 
 // receivePacket receives an array of unsigned chars, and a packetSize.
@@ -105,16 +86,11 @@ void Processor::receivePacket(
     //     e.g. packet[8::] is the actual data
     
     // Get the packet type
-    // Placeholder, as right now, packetType == 0
     int packetType = unsignedCharToInt(&packet[0]);
     
     //Get the payload size
-    // Placeholder, as right now, payloadSize == 0
     int payloadSize = unsignedCharToInt(&packet[sizeof(int)]);
-    
-    // to-do: Set the packetType and payloadSize
-    // in processedPacket.
-    
+        
     // Assign member sizeOfPacket
     // Placeholder, as right now, sizeOfPacket == 2
     // Note: sizeOfPacket != totalPacketSize
@@ -124,6 +100,12 @@ void Processor::receivePacket(
     
     // Processed packet
     processedPacket = new float [sizeOfPacket];
+    
+    // Set the packetType and payloadSize
+    // in processedPacket.
+    processedPacket[0] = float(packetType);
+    processedPacket[1] = float(payloadSize);
+
 
     // Set the member packetType accordingly.
     if (packetType == 0)
@@ -137,10 +119,8 @@ void Processor::receivePacket(
     
     // Process the packet
     // We've already taken care of the first 2*sizeof(int) unsigned chars.
-    // For testing purposes, set j=0; It should be 2*sizeof(int).
-    int j = 0;
-    // For testing purposes, set k=0; It should be 2.
-    int k = 0;
+    int j = 2*sizeof(int);
+    int k = 2;
     while(j<totalPacketSize && k<sizeOfPacket)
     {
         float multiplier;
