@@ -38,3 +38,4 @@ These bytes are then decoded into floats
 https://www.h-schmidt.net/FloatConverter/IEEE754.html
 https://stackoverflow.com/questions/6834343/ultra-quick-way-to-concatenate-byte-values
 https://www.keil.com/support/man/docs/c51/c51_ap_floatingpt.htm
+https://stackoverflow.com/questions/14535865/union-between-a-float-and-an-array-of-unsigned-char
