@@ -175,39 +175,76 @@ TEST_CASE("Get Brightness")
     Processor q(0, brightness);
     REQUIRE(q.getBrightness() == brightness);
 }
-//
-//TEST_CASE("Volume")
-//{
-//    // Check the basic volume processor works.
-//    // Create testPacket = [0, 5, 1, 2, 3, 4, 5]
-//    int * testPacket;
-//    size_t testPacketSize = 7;
-//    testPacket = new int [testPacketSize];
-//    testPacket[0] = 0; // audio
-//    testPacket[1] = 5; // payload size
-//    for (int j=2; j<testPacketSize; ++j)
-//        testPacket[j] = j-1;
-//    
-//    // Instantiate the Processor object.
-//    int volume = 3;
-//    int brightness = 0;
-//    Processor p(volume, brightness);
-//    
-//    p.receivePacket(testPacket, testPacketSize);
-//    int sizeOfPacket = p.getPacketSize();
-//    REQUIRE(sizeOfPacket == testPacketSize);
-//    int * processedPacket =  p.getProcessedPacket();
-//    for (int i=0; i<sizeOfPacket; ++i)
-//    {
-//        if (i==0)
-//            REQUIRE(processedPacket[i] == 0);
-//        else if (i==1)
-//            REQUIRE(processedPacket[i] == sizeOfPacket - 2);
-//        else
-//            REQUIRE(processedPacket[i] == testPacket[i] * volume);
-//    }
-//    delete [] testPacket;
-//}
+
+TEST_CASE("Volume")
+{
+    // Check the basic volume processor works.
+    // Create testPacket = [0, 5, 1, 2, 3, 4, 5]
+    unsigned char * testPacket;
+    size_t testPacketSize = 7*sizeof(int);
+    testPacket = new unsigned char [testPacketSize * sizeof(int)];
+    
+    testPacket[0] = 0x00; // audio
+    testPacket[1] = 0x00;
+    testPacket[2] = 0x00;
+    testPacket[3] = 0x00;
+    
+    testPacket[4] = 0x00; // payload size
+    testPacket[5] = 0x00;
+    testPacket[6] = 0x00;
+    testPacket[7] = 0x05;
+    
+    // testPacket[8:11] represents 1
+    testPacket[8] = 0x3F;
+    testPacket[9] = 0x80;
+    testPacket[10] = 0x00;
+    testPacket[11] = 0x00;
+    
+    // testPacket[12:15] represents 2
+    testPacket[12] = 0x40;
+    testPacket[13] = 0x00;
+    testPacket[14] = 0x00;
+    testPacket[15] = 0x00;
+    
+    // testPacket[16:19] represents 3
+    testPacket[16] = 0x40;
+    testPacket[17] = 0x40;
+    testPacket[18] = 0x00;
+    testPacket[19] = 0x00;
+    
+    // testPacket[20:23] represents 4
+    testPacket[20] = 0x40;
+    testPacket[21] = 0x80;
+    testPacket[22] = 0x00;
+    testPacket[23] = 0x00;
+    
+    // testPacket[24:27] represents 5
+    testPacket[24] = 0x40;
+    testPacket[25] = 0xa0;
+    testPacket[26] = 0x00;
+    testPacket[27] = 0x00;
+    
+    // Instantiate the Processor object.
+    int volume = 3;
+    int brightness = 0;
+    Processor p(volume, brightness);
+    
+    p.receivePacket(testPacket, testPacketSize);
+    int sizeOfPacket = p.getPacketSize();
+    REQUIRE(sizeOfPacket == testPacketSize/sizeof(float));
+    float * processedPacket =  p.getProcessedPacket();    
+    float testPacketAsFloat[5] = {1, 2, 3, 4, 5};
+    for (int i=0; i<sizeOfPacket; ++i)
+    {
+        if (i==0)
+            REQUIRE(processedPacket[i] == 0);
+        else if (i==1)
+            REQUIRE(processedPacket[i] == sizeOfPacket - 2);
+        else
+            REQUIRE(processedPacket[i] == testPacketAsFloat[i-2] * volume);
+    }
+    delete [] testPacket;
+}
 //
 //TEST_CASE("Display")
 //{
