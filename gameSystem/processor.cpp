@@ -34,17 +34,6 @@ Processor::~Processor(){
         delete [] processedPacket;
 }
 
-// Encode int as a sequence of unsigned chars
-// TO-DO
-//unsigned char * intToUnsignedChar(const int integer, unsigned char * buffer)
-//{
-//    for (int j=0; j<sizeof(int); ++j)
-//    {
-//        buffer[j] = integer >> (sizeof(int) - (j+1)*8);
-//        ++buffer;
-//    }
-//    return buffer;
-//}
 
 // Encode unsigned chars to int
 int unsignedCharToInt(const unsigned char *byte)
@@ -70,10 +59,11 @@ float unsignedCharToFloat(const unsigned char * byte)
     return f.f;
 }
 
-// receivePacket receives an array of unsigned chars, and a packetSize.
+// receivePacket receives an array of unsigned chars. The number of unsigned
+// chars to receive is specifie by totalNumberOfBytes
 void Processor::receivePacket(
                               const unsigned char * packet,
-                              const size_t totalPacketSize
+                              const size_t totalNumberOfBytes
                               )
 {
     // packet[0:sizeof(float)-1] is packet type (Audio, Display, Buttons), as an
@@ -93,8 +83,8 @@ void Processor::receivePacket(
         
     // Assign member sizeOfPacket
     // Placeholder, as right now, sizeOfPacket == 2
-    // Note: sizeOfPacket != totalPacketSize
-    //    e.g. 8 ints means totalPacketSize == 32
+    // Note: sizeOfPacket != totalNumberOfBytes
+    //    e.g. 8 ints means totalNumberOfBytes == 32
     //    while we want sizeOfPacket == 8.
     sizeOfPacket = payloadSize + 2;
     
@@ -121,7 +111,7 @@ void Processor::receivePacket(
     // We've already taken care of the first 2*sizeof(int) unsigned chars.
     int j = 2*sizeof(int);
     int k = 2;
-    while(j<totalPacketSize && k<sizeOfPacket)
+    while(j<totalNumberOfBytes && k<sizeOfPacket)
     {
         float multiplier;
         if (packetType == 0) // Audio
