@@ -13,7 +13,7 @@ public:
     Processor();
     Processor(const int volume, const int brightness);
     ~Processor();
-    void receivePacket(const unsigned char *packet, const size_t totalPacketSize);
+    void receivePacket(const unsigned char *packet, const size_t totalNumberOfBytes);
     float * getProcessedPacket();
     int getPacketSize();
     std::string getPacketType();
@@ -25,12 +25,8 @@ private:
     const int volume;
     const int brightness;
     float * processedPacket;
-    // int * processedPacket;
 };
 
-bool isLittleEndian();
-// TO-DO intToUnsignedChar
-// unsigned char * intToUnsignedChar(const int integer, unsigned char * buffer)
 int unsignedCharToInt(const unsigned char *byte);
 float unsignedCharToFloat(const unsigned char * byte);
 
