@@ -6,7 +6,7 @@ gameSystem is a simple system written in C++ to process signals for a
 video game system. This is implemented in a class called
 `Processor`. The `Processor` class can receive a display, audio, or
 button packet and do some simple signal processing. This is
-implemented by the `Processor::receivePacket()` function. We assume the incomig packets
+implemented by the `Processor::receivePacket()` function. We assume the incoming packets
 are a series of bytes and are structured as follows.
 
 ```
@@ -38,7 +38,7 @@ float volume; // define the volume
 float brightness; // define the brightness
 Processor p(volume, brightness)
 // OR
-Processor p; // default constructors
+Processor p; // default constructor
 ```
 
 With an instance of the processor, call the `receivePacket(const unsigned char * packet, const size_t totalNumberOfBytes)`method.
@@ -73,7 +73,7 @@ is interpreted as a float. (This is not the only way to solve this problem.)
 
 ## Useful Links
 [See how floats are stored in memory](https://www.h-schmidt.net/FloatConverter/IEEE754.html)
-[See how to bitwise left-shift bytes to create an integer]https://stackoverflow.com/questions/6834343/ultra-quick-way-to-concatenate-byte-values
+[See how to bitwise left-shift bytes to create an integer](https://stackoverflow.com/questions/6834343/ultra-quick-way-to-concatenate-byte-values)
 [More details on how floats are stored in memory](https://www.keil.com/support/man/docs/c51/c51_ap_floatingpt.htm)
 [See how to use a union between an array of unsigned chars and a float](https://stackoverflow.com/questions/14535865/union-between-a-float-and-an-array-of-unsigned-char)
 [An alternate implementation of unsignedCharToFloat](https://godbolt.org/z/vYM5czqs8)
