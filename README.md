@@ -73,7 +73,11 @@ is interpreted as a float. (This is not the only way to solve this problem.)
 
 ## Useful Links
 [See how floats are stored in memory](https://www.h-schmidt.net/FloatConverter/IEEE754.html)
+
 [See how to bitwise left-shift bytes to create an integer](https://stackoverflow.com/questions/6834343/ultra-quick-way-to-concatenate-byte-values)
+
 [More details on how floats are stored in memory](https://www.keil.com/support/man/docs/c51/c51_ap_floatingpt.htm)
+
 [See how to use a union between an array of unsigned chars and a float](https://stackoverflow.com/questions/14535865/union-between-a-float-and-an-array-of-unsigned-char)
+
 [An alternate implementation of unsignedCharToFloat](https://godbolt.org/z/vYM5czqs8)
