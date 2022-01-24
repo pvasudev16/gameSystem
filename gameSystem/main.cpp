@@ -19,10 +19,24 @@ TEST_CASE("unsignedCharToInt")
 
     // Check that zero is correctly reperesented
     representation = new unsigned char [4];
+    // AL: Check that representation is NOT a nullptr, indicating that the
+    // memory allocation failed. Use an ASSERT. Good practice to check that
+    // memory allocation succeeds.
+    
+    // AL: Conside statically allocate memory, esp. for memory constrained systems
+    // that might have only 16 KB memory.
+    
     representation[0] = 0x00;
     representation[1] = 0x00;
     representation[2] = 0x00;
     representation[3] = 0x00;
+    
+    // Allen: how could this fail?
+    // PV: What if I use 8 bytes? this fuct would fail. Use a function param.
+    // AL: Think of the system. The context is an integer is four bytes.
+    //     Let's impose this constraint. Make a test case to test this assumption!
+    //     What if the platform we're building this code on has ints as 8 byes.
+    //     Write a test that checks the REQUIRE(sizeof(int) == 4)
     integerRepresentation = unsignedCharToInt(representation);
     REQUIRE(integerRepresentation == 0);
 
@@ -35,6 +49,10 @@ TEST_CASE("unsignedCharToInt")
     integerRepresentation = unsignedCharToInt(representation);
     REQUIRE(integerRepresentation == 16909320);
     delete [] representation;
+    
+    // AL: Check negative numbers, largest possible +/- numbers.
+    
+    // AL:
  }
 
 TEST_CASE("unsignedCharToFloat")

@@ -41,6 +41,12 @@ int unsignedCharToInt(const unsigned char *byte)
     int integerToReturn = 0;
     for (int j=0; j<sizeof(int); ++j)
     {
+        // AL: Why might using +/* not be ideal?
+        //     In internal registers, multiplication, addition, etc.
+        //     have extra costs. You could do this using bitwise OR
+        //     which is probably more efficient.
+        //     Bitshift will load memory probably only once into CPU, while
+        //     addition has more memory loads. Less CPU flops with bitwise OR.
         integerToReturn += int(*byte << (sizeof(int) - (j+1))*8);
         ++byte;
     }
@@ -89,6 +95,11 @@ void Processor::receivePacket(
     sizeOfPacket = payloadSize + 2;
     
     // Processed packet
+    // AL: What's the problem with this line?
+    // PV: I'm creating a memory leak here!
+    //     If I use the same instance of Processor and call
+    //     receivePacket many tiems, I'm calling new many times
+    //     yet only do a delete once in the destructor.
     processedPacket = new float [sizeOfPacket];
     
     // Set the packetType and payloadSize
@@ -109,6 +120,8 @@ void Processor::receivePacket(
     
     // Process the packet
     // We've already taken care of the first 2*sizeof(int) unsigned chars.
+    // AL: Safety. What if we expect 10 bytes but we only get 5?
+    // AL: Could use a checksum (OR, AND, XOR)
     int j = 2*sizeof(int);
     int k = 2;
     while(j<totalNumberOfBytes && k<sizeOfPacket)
